@@ -37,6 +37,7 @@ libopenthread_cc2538_a_CPPFLAGS           = \
     $(NULL)
 
 libopenthread_cc2538_a_SOURCES            = \
+    adc.c                                   \
     alarm.c                                 \
     flash.c                                 \
     gpio.c                                  \
@@ -55,6 +56,7 @@ libopenthread_cc2538_a_SOURCES           += \
 endif
 
 noinst_HEADERS                            = \
+    adc.h                                   \
     cc2538-reg.h                            \
     gpio.h                                  \
     platform-cc2538.h                       \

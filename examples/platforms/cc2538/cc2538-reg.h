@@ -157,6 +157,9 @@
 
 #define IOC_MUX_OUT_SEL_UART0_TXD               0x00000000
 
+#define IOC_OVERRIDE_ANA                        0x00000001
+#define IOC_OVERRIDE_PDE                        0x00000002
+#define IOC_OVERRIDE_PUE                        0x00000004
 #define IOC_OVERRIDE_OE                         0x00000008  // PAD Config Override Output Enable
 #define IOC_OVERRIDE_DIS                        0x00000000  // PAD Config Override Disabled
 
@@ -195,12 +198,26 @@
 #define UART_IM_RXIM                            0x00000010  // UART receive interrupt mask
 #define UART_IM_RTIM                            0x00000040  // UART receive time-out interrupt
 
-#define SOC_ADC_ADCCON1                         0x400D7000  // ADC Control
+#define SOC_ADC_ADCCON1                         0x400D7000  // ADC Control 1
+#define SOC_ADC_ADCCON2                         0x400D7004  // ADC Control 2
+#define SOC_ADC_ADCCON3                         0x400D7008  // ADC Control 3
+
 #define SOC_ADC_RNDL                            0x400D7014  // RNG low data
 #define SOC_ADC_RNDH                            0x400D7018  // RNG high data
 
+#define SOC_ADC_ADCCON1_EOC                     0x00000080  // End of conversion
+#define SOC_ADC_ADCCON1_ST                      0x00000040  // Start conversion
+#define SOC_ADC_ADCCON1_STSEL                   0x00000030  // Start select
+#define SOC_ADC_ADCCON1_RCTRL                   0x0000000C  // Controls the 16-bit RNG
 #define SOC_ADC_ADCCON1_RCTRL0                  0x00000004  // ADCCON1 RCTRL bit 0
 #define SOC_ADC_ADCCON1_RCTRL1                  0x00000008  // ADCCON1 RCTRL bit 1
+
+#define SOC_ADC_ADCCON3_EREF                    0x000000C0  // Reference voltage for extra
+#define SOC_ADC_ADCCON3_EDIV                    0x00000030  // Decimation rate for extra
+#define SOC_ADC_ADCCON3_ECH                     0x0000000F  // Single channel select
+
+#define SOC_ADC_ADCL_ADC                        0x000000FC  // ADC least significant part
+#define SOC_ADC_ADCH_ADC                        0x000000FF  // ADC most significant part
 
 #define FLASH_BASE                              0x00200000  // Flash base address
 #define FLASH_CTRL_FCTL                         0x400D3008  // Flash control

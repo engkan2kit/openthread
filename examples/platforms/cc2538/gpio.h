@@ -57,12 +57,6 @@ enum {
 #define IOC_PXX_SEL             0x400d4000
 #define IOC_PXX_OVER            0x400d4080
 
-// in/out options
-#define IOC_OVERRIDE_ANA        0x00000001
-#define IOC_OVERRIDE_PDE        0x00000002
-#define IOC_OVERRIDE_PUE        0x00000004
-#define IOC_OVERRIDE_OE         0x00000008  // PAD Config Override Output Enable
-
 // peripheral select values
 #define IOC_SEL_UART0_TXD       (0)
 #define IOC_SEL_UART1_RTS       (1)
