@@ -160,6 +160,18 @@
 #define IOC_I2CMSSCL                            0x400D4130
 
 #define IOC_MUX_OUT_SEL_UART0_TXD               0x00000000
+#define IOC_MUX_SEL_UART1_RTS                   0x00000001
+#define IOC_MUX_SEL_UART1_TXD                   0x00000002
+#define IOC_MUX_SEL_SSI0_TXD                    0x00000003
+#define IOC_MUX_SEL_SSI0_CLKOUT                 0x00000004
+#define IOC_MUX_SEL_SSI0_FSSOUT                 0x00000005
+#define IOC_MUX_SEL_SSI0_STXSER_EN              0x00000006
+#define IOC_MUX_SEL_SSI1_TXD                    0x00000007
+#define IOC_MUX_SEL_SSI1_CLKOUT                 0x00000008
+#define IOC_MUX_SEL_SSI1_FSSOUT                 0x00000009
+#define IOC_MUX_SEL_SSI1_STXSER_EN              0x0000000A
+#define IOC_MUX_SEL_I2C_CMSSDA                  0x0000000B
+#define IOC_MUX_SEL_I2C_CMSSCL                  0x0000000C
 
 #define IOC_OVERRIDE_ANA                        0x00000001
 #define IOC_OVERRIDE_PDE                        0x00000002

@@ -57,29 +57,6 @@ enum {
 #define IOC_PXX_SEL             0x400d4000
 #define IOC_PXX_OVER            0x400d4080
 
-// peripheral select values
-#define IOC_SEL_UART0_TXD       (0)
-#define IOC_SEL_UART1_RTS       (1)
-#define IOC_SEL_UART1_TXD       (2)
-#define IOC_SEL_SSI0_TXD        (3)
-#define IOC_SEL_SSI0_CLKOUT     (4)
-#define IOC_SEL_SSI0_FSSOUT     (5)
-#define IOC_SEL_SSI0_STXSER_EN  (6)
-#define IOC_SEL_SSI1_TXD        (7)
-#define IOC_SEL_SSI1_CLKOUT     (8)
-#define IOC_SEL_SSI1_FSSOUT     (9)
-#define IOC_SEL_SSI1_STXSER_EN  (10)
-#define IOC_SEL_I2C_CMSSDA      (11)
-#define IOC_SEL_I2C_CMSSCL      (12)
-#define IOC_SEL_GPT0_ICP1       (13)
-#define IOC_SEL_GPT0_ICP2       (14)
-#define IOC_SEL_GPT1_ICP1       (15)
-#define IOC_SEL_GPT1_ICP2       (16)
-#define IOC_SEL_GPT2_ICP1       (17)
-#define IOC_SEL_GPT2_ICP2       (18)
-#define IOC_SEL_GPT3_ICP1       (19)
-#define IOC_SEL_GPT3_ICP2       (20)
-
 // GPIO offsets
 #define GPIO_DATA               0x00000000
 #define GPIO_DIR                0x00000400
