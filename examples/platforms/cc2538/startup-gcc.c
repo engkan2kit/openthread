@@ -174,7 +174,9 @@ void ResetHandler(void)
 
     // configure clocks
     HWREG(SYS_CTRL_CLOCK_CTRL) |= SYS_CTRL_CLOCK_CTRL_AMP_DET;
-    HWREG(SYS_CTRL_CLOCK_CTRL) = SYS_CTRL_SYSDIV_32MHZ;
+    HWREG(SYS_CTRL_CLOCK_CTRL) = SYS_CTRL_SYSDIV_32MHZ |
+                                 SYS_CTRL_CLOCK_CTRL_IO_DIV_16MHZ |
+                                 SYS_CTRL_CLOCK_CTRL_OSC_PD;
 
     // alternate map
     HWREG(SYS_CTRL_I_MAP) |= SYS_CTRL_I_MAP_ALTMAP;

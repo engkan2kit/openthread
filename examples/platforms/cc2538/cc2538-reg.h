@@ -124,6 +124,8 @@
 
 #define SYS_CTRL_CLOCK_CTRL                     0x400D2000  // The clock control register
 #define SYS_CTRL_SYSDIV_32MHZ                   0x00000000  // Sys_div for sysclk 32MHz
+#define SYS_CTRL_CLOCK_CTRL_IO_DIV_16MHZ        0x00000100  // IO clock 16MHz
+#define SYS_CTRL_CLOCK_CTRL_OSC_PD              0x00020000  // Power up both oscillators
 #define SYS_CTRL_CLOCK_CTRL_AMP_DET             0x00200000
 
 #define SYS_CTRL_PWRDBG                         0x400D2074
@@ -154,6 +156,8 @@
 
 #define IOC_PA0_OVER                            0x400D4080
 #define IOC_PA1_OVER                            0x400D4084
+#define IOC_I2CMSSDA                            0x400D412C
+#define IOC_I2CMSSCL                            0x400D4130
 
 #define IOC_MUX_OUT_SEL_UART0_TXD               0x00000000
 
@@ -218,6 +222,16 @@
 
 #define SOC_ADC_ADCL_ADC                        0x000000FC  // ADC least significant part
 #define SOC_ADC_ADCH_ADC                        0x000000FF  // ADC most significant part
+
+#define SYS_CTRL_RCGCI2C                        0x400D2038  // I2C clocks active mode
+#define SYS_CTRL_DCGCI2C                        0x400D2040  // I2C clocks - PM0
+#define SYS_CTRL_SRI2C                          0x400D2044  // I2C clocks reset control
+#define I2CM_CR                                 0x40020020  // I2C master config
+#define I2CM_TPR                                0x4002000C  // I2C master timer period
+#define I2CM_SA                                 0x40020000  // I2C master slave address
+#define I2CM_DR                                 0x40020008  // I2C master data
+#define I2CM_CTRL                               0x40020004  // Master control in write
+#define I2CM_STAT                               I2CM_CTRL   // Master status in read
 
 #define FLASH_BASE                              0x00200000  // Flash base address
 #define FLASH_CTRL_FCTL                         0x400D3008  // Flash control
