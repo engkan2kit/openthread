@@ -41,7 +41,7 @@ OBJCOPY                         = arm-none-eabi-objcopy
 
 BuildJobs                      ?= 10
 
-configure_OPTIONS               = \
+configure_OPTIONS              := \
     --enable-cli-app=all          \
     --enable-ncp-app=all          \
     --with-ncp-bus=uart           \
@@ -50,6 +50,12 @@ configure_OPTIONS               = \
     --with-platform-info=CC2538   \
     $(NULL)
 
+ifneq ($(BOARD),)
+configure_OPTIONS              += \
+    --with-boards=$(BOARD)
+endif
+
+DEFAULT_LOGGING ?= 1
 include $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/common-switches.mk
 
 TopSourceDir                    := $(dir $(shell readlink $(firstword $(MAKEFILE_LIST))))..
