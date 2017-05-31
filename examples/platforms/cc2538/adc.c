@@ -60,7 +60,7 @@ int16_t cc2538AdcReadChannel(uint8_t channel)
 
     while(!(HWREG(SOC_ADC_ADCCON1) & SOC_ADC_ADCCON1_EOC));
 
-    res  = HWREG(SOC_ADC_ADCL) & 0xFC;
-    res |= HWREG(SOC_ADC_ADCH) << 8;
+    res  = HWREG(SOC_ADC_ADCL_ADC) & 0xFC;
+    res |= HWREG(SOC_ADC_ADCH_ADC) << 8;
     return res;
 }
