@@ -1144,6 +1144,46 @@ AC_SUBST(OPENTHREAD_EXAMPLES_NRF52840)
 AM_CONDITIONAL([OPENTHREAD_EXAMPLES_NRF52840], [test "${OPENTHREAD_EXAMPLES}" = "nrf52840"])
 
 #
+# Boards
+#
+
+AC_ARG_WITH(boards,
+    [AS_HELP_STRING([--with-boards=TARGET],
+        [Specify the boards from one of: none, cc2538dk @<:@default=none@:>@.])],
+    [
+        case "${with_boards}" in
+
+        none|cc2538dk)
+            ;;
+        *)
+            AC_MSG_ERROR([Invalid value ${with_boards} for --with-boards])
+            ;;
+        esac
+    ],
+    [with_boards=none])
+
+OPENTHREAD_BOARDS=${with_boards}
+
+case ${with_boards} in
+
+    cc2538dk)
+        OPENTHREAD_BOARD_CC2538DK=1
+        AC_DEFINE_UNQUOTED([OPENTHREAD_BOARD_CC2538DK],[${OPENTHREAD_BOARD_CC2538DK}],[Define to 1 if you want to use examples on the TI CC2538DK board])
+        ;;
+
+esac
+
+AC_MSG_CHECKING([whether to enable example boards])
+AC_MSG_RESULT(${OPENTHREAD_BOARDS})
+
+AC_SUBST(OPENTHREAD_BOARDS)
+AM_CONDITIONAL([OPENTHREAD_BOARDS], [test ${with_boards} != "none"])
+AC_DEFINE_UNQUOTED([OPENTHREAD_BOARDS],[${OPENTHREAD_BOARDS}],[OpenThread example boards])
+
+AC_SUBST(OPENTHREAD_BOARD_CC2538DK)
+AM_CONDITIONAL([OPENTHREAD_BOARD_CC2538DK], [test "${OPENTHREAD_BOARDS}" = "cc2538"])
+
+#
 # Platform Information
 #
 
