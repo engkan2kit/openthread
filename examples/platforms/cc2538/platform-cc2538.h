@@ -59,6 +59,17 @@ void cc2538AlarmInit(void);
 void cc2538AlarmProcess(otInstance *aInstance);
 
 /**
+ * This function calls board-specific initialisation code.  By default it
+ * is a no-op.
+ */
+void cc2538BoardInit(int argc, char* argv[]);
+
+/**
+ * This function calls board-specific process code.  By default it is a no-op.
+ */
+void cc2538BoardProcess(otInstance *aInstance);
+
+/**
  * This function initializes the radio service used by OpenThread.
  *
  */

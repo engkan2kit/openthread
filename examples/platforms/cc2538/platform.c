@@ -36,8 +36,22 @@
 
 otInstance *sInstance;
 
+void cc2538BoardInit(int argc, char *argv[])
+{
+    (void)argc;
+    (void)argv;
+}
+__attribute__((weak))
+
+void cc2538BoardProcess(otInstance *aInstance)
+{
+    (void)aInstance;
+}
+__attribute__((weak))
+
 void PlatformInit(int argc, char *argv[])
 {
+    cc2538BoardInit(argc, argv);
     cc2538AlarmInit();
     cc2538RandomInit();
     cc2538RadioInit();
@@ -52,6 +66,7 @@ void PlatformProcessDrivers(otInstance *aInstance)
 
     // should sleep and wait for interrupts here
 
+    cc2538BoardProcess(aInstance);
     cc2538UartProcess();
     cc2538RadioProcess(aInstance);
     cc2538AlarmProcess(aInstance);
