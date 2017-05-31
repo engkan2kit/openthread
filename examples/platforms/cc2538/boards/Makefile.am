@@ -29,56 +29,17 @@
 include $(abs_top_nlbuild_autotools_dir)/automake/pre.am
 
 DIST_SUBDIRS                              = \
-    boards                                  \
+    cc2538dk                                \
     $(NULL)
 
-if OPENTHREAD_BOARDS
-SUBDIRS                                   = boards
+SUBDIRS                                   = $(NULL)
+
+if OPENTHREAD_BOARD_CC2538DK
+SUBDIRS                                  += cc2538dk
 endif
 
-lib_LIBRARIES                             = libopenthread-cc2538.a
-
-libopenthread_cc2538_a_CPPFLAGS           = \
-    -I$(top_srcdir)/include                 \
-    -I$(top_srcdir)/examples/platforms      \
-    -I$(top_srcdir)/src/core                \
-    $(NULL)
-
-libopenthread_cc2538_a_SOURCES            = \
-    adc.c                                   \
-    alarm.c                                 \
-    flash.c                                 \
-    gpio.c                                  \
-    i2c.c                                   \
-    misc.c                                  \
-    platform.c                              \
-    radio.c                                 \
-    random.c                                \
-    startup-gcc.c                           \
-    uart.c                                  \
-    $(NULL)
-
-if OPENTHREAD_ENABLE_DIAG
-libopenthread_cc2538_a_SOURCES           += \
-    diag.c                                  \
-    $(NULL)
-endif
-
-noinst_HEADERS                            = \
-    adc.h                                   \
-    cc2538-reg.h                            \
-    gpio.h                                  \
-    i2c.h                                   \
-    platform-cc2538.h                       \
-    rom-utility.h                           \
-    $(NULL)
-
-Dash                                      = -
-libopenthread_cc2538_a_LIBADD             = \
-    $(shell find $(top_builddir)/examples/platforms/utils $(Dash)type f $(Dash)name "*.o")
-
-PRETTY_SUBDIRS                          = \
-    boards                                \
+PRETTY_SUBDIRS                            = \
+    cc2538dk                                \
     $(NULL)
 
 include $(abs_top_nlbuild_autotools_dir)/automake/post.am
