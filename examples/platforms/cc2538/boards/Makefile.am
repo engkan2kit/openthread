@@ -32,12 +32,6 @@ DIST_SUBDIRS                              = \
     cc2538dk                                \
     $(NULL)
 
-SUBDIRS                                   = $(NULL)
-
-if OPENTHREAD_BOARD_CC2538DK
-SUBDIRS                                  += cc2538dk
-endif
-
 PRETTY_SUBDIRS                            = \
     cc2538dk                                \
     $(NULL)
