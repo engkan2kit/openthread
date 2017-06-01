@@ -1181,7 +1181,7 @@ AM_CONDITIONAL([OPENTHREAD_BOARDS], [test ${with_boards} != "none"])
 AC_DEFINE_UNQUOTED([OPENTHREAD_BOARDS],[${OPENTHREAD_BOARDS}],[OpenThread example boards])
 
 AC_SUBST(OPENTHREAD_BOARD_CC2538DK)
-AM_CONDITIONAL([OPENTHREAD_BOARD_CC2538DK], [test "${OPENTHREAD_BOARDS}" = "cc2538"])
+AM_CONDITIONAL([OPENTHREAD_BOARD_CC2538DK], [test "${OPENTHREAD_BOARDS}" = "cc2538dk"])
 
 #
 # Platform Information
@@ -1340,6 +1340,8 @@ examples/apps/cli/Makefile
 examples/apps/ncp/Makefile
 examples/platforms/Makefile
 examples/platforms/cc2538/Makefile
+examples/platforms/cc2538/boards/Makefile
+examples/platforms/cc2538/boards/cc2538dk/Makefile
 examples/platforms/cc2650/Makefile
 examples/platforms/da15000/Makefile
 examples/platforms/efr32/Makefile
