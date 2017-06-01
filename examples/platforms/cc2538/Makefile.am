@@ -32,10 +32,6 @@ DIST_SUBDIRS                              = \
     boards                                  \
     $(NULL)
 
-if OPENTHREAD_BOARDS
-SUBDIRS                                   = boards
-endif
-
 lib_LIBRARIES                             = libopenthread-cc2538.a
 
 libopenthread_cc2538_a_CPPFLAGS           = \
@@ -58,6 +54,12 @@ libopenthread_cc2538_a_SOURCES            = \
     uart.c                                  \
     $(NULL)
 
+if OPENTHREAD_BOARD_CC2538DK
+libopenthread_cc2538_a_SOURCES           += \
+    boards/cc2538dk/board.c                 \
+    $(NULL)
+endif
+
 if OPENTHREAD_ENABLE_DIAG
 libopenthread_cc2538_a_SOURCES           += \
     diag.c                                  \
@@ -77,8 +79,8 @@ Dash                                      = -
 libopenthread_cc2538_a_LIBADD             = \
     $(shell find $(top_builddir)/examples/platforms/utils $(Dash)type f $(Dash)name "*.o")
 
-PRETTY_SUBDIRS                          = \
-    boards                                \
+PRETTY_SUBDIRS                            = \
+    boards                                  \
     $(NULL)
 
 include $(abs_top_nlbuild_autotools_dir)/automake/post.am
