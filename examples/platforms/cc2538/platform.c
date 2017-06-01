@@ -33,25 +33,15 @@
  */
 
 #include "platform-cc2538.h"
+#include "openthread-config.h"
 
 otInstance *sInstance;
 
-void cc2538BoardInit(int argc, char *argv[])
-{
-    (void)argc;
-    (void)argv;
-}
-__attribute__((weak))
-
-void cc2538BoardProcess(otInstance *aInstance)
-{
-    (void)aInstance;
-}
-__attribute__((weak))
-
 void PlatformInit(int argc, char *argv[])
 {
+#ifdef OPENTHREAD_BOARDS
     cc2538BoardInit(argc, argv);
+#endif
     cc2538AlarmInit();
     cc2538RandomInit();
     cc2538RadioInit();
@@ -66,7 +56,9 @@ void PlatformProcessDrivers(otInstance *aInstance)
 
     // should sleep and wait for interrupts here
 
+#ifdef OPENTHREAD_BOARDS
     cc2538BoardProcess(aInstance);
+#endif
     cc2538UartProcess();
     cc2538RadioProcess(aInstance);
     cc2538AlarmProcess(aInstance);
