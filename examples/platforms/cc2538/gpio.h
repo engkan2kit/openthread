@@ -85,6 +85,7 @@ enum {
 #define cc2538GpioDirInput(port_num, pin_num)        ( HWREG(GPIO_PORT_TO_DEV(port_num) + GPIO_DIR) &= ~GPIO_PIN_MASK(pin_num) )
 #define cc2538GpioReadPin(port_num, pin_num)         ( HWREG(GPIO_PORT_TO_DEV(port_num) + GPIO_DATA + (GPIO_PIN_MASK(pin_num) << 2)) )
 #define cc2538GpioSetPin(port_num, pin_num)          ( HWREG(GPIO_PORT_TO_DEV(port_num) + GPIO_DATA + (GPIO_PIN_MASK(pin_num) << 2)) = 0xFF )
+#define cc2538GpioTogglePin(port_num, pin_num)        ( HWREG(GPIO_PORT_TO_DEV(port_num) + GPIO_DATA + (GPIO_PIN_MASK(pin_num) << 2)) ^= 0xFF )
 #define cc2538GpioClearPin(port_num, pin_num)        ( HWREG(GPIO_PORT_TO_DEV(port_num) + GPIO_DATA + (GPIO_PIN_MASK(pin_num) << 2)) = 0x00 )
 
 // IOC functions
