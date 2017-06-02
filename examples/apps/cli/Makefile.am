@@ -74,6 +74,10 @@ LDADD_COMMON                                                          += \
 LDFLAGS_COMMON                                                        += \
     -T $(top_srcdir)/examples/platforms/cc2538/cc2538.ld                 \
     $(NULL)
+
+CPPFLAGS_COMMON                                                       += \
+    -I$(top_srcdir)/examples/platforms/cc2538                            \
+    $(NULL)
 endif # OPENTHREAD_EXAMPLES_CC2538
 
 if OPENTHREAD_EXAMPLES_CC2650
@@ -167,6 +171,13 @@ ot_cli_ftd_SOURCES                                                     = \
     $(SOURCES_COMMON)                                                    \
     $(NULL)
 
+if OPENTHREAD_ENABLE_APPLICATION_COAP
+if OPENTHREAD_BOARD_CC2538DK
+ot_cli_ftd_SOURCES                                                    += \
+    coap.c
+endif
+endif
+
 if OPENTHREAD_ENABLE_CLI_MTD
 bin_PROGRAMS                                                          += \
     ot-cli-mtd                                                           \
@@ -190,6 +201,13 @@ ot_cli_mtd_LDFLAGS                                                     = \
 ot_cli_mtd_SOURCES                                                     = \
     $(SOURCES_COMMON)                                                    \
     $(NULL)
+
+if OPENTHREAD_ENABLE_APPLICATION_COAP
+if OPENTHREAD_BOARD_CC2538DK
+ot_cli_mtd_SOURCES                                                    += \
+    coap.c
+endif
+endif
 
 if OPENTHREAD_BUILD_COVERAGE
 CLEANFILES                                                             = $(wildcard *.gcda *.gcno)

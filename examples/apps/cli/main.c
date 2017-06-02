@@ -30,10 +30,13 @@
 
 #include <assert.h>
 
+#include <stdio.h>
 #include <openthread/cli.h>
 #include <openthread/diag.h>
 #include <openthread/openthread.h>
 #include <openthread/platform/platform.h>
+
+otError coapExampleInit(otInstance *aInstance);
 
 #ifdef OPENTHREAD_MULTIPLE_INSTANCE
 void *otPlatCAlloc(size_t aNum, size_t aSize)
@@ -79,6 +82,7 @@ int main(int argc, char *argv[])
     assert(sInstance);
 
     otCliUartInit(sInstance);
+    coapExampleInit(sInstance);
 
 #if OPENTHREAD_ENABLE_DIAG
     otDiagInit(sInstance);
