@@ -130,14 +130,14 @@ static void defaultHandler(
      * "piggy-back" response by appending it to the ACK reply we send.
      */
 
-    if (otCoapHeaderGetType(aHeader) != kCoapTypeConfirmable)
+    if (otCoapHeaderGetType(aHeader) != OT_COAP_TYPE_CONFIRMABLE)
     {
         /* Not a confirmable request, so ignore it. */
         return;
     }
 
     switch (otCoapHeaderGetCode(aHeader)) {
-        case kCoapRequestGet:   /* A GET request */
+        case OT_COAP_CODE_GET:   /* A GET request */
             {
                 /*
                  * In our case, we don't care about the message, we just
@@ -150,8 +150,8 @@ static void defaultHandler(
 
                 otCoapHeaderInit(
                         &replyHeader,
-                        kCoapTypeAcknowledgment,
-                        kCoapResponseContent
+                        OT_COAP_TYPE_ACKNOWLEDGMENT,
+                        OT_COAP_CODE_CONTENT
                 );
 
                 otCoapHeaderSetToken(&replyHeader,
@@ -207,14 +207,14 @@ static void ambientLightSensorHandler(
     struct CoapHandlerContext *handlerContext =
         (struct CoapHandlerContext*)aContext;
 
-    if (otCoapHeaderGetType(aHeader) != kCoapTypeConfirmable)
+    if (otCoapHeaderGetType(aHeader) != OT_COAP_TYPE_CONFIRMABLE)
     {
         /* Not a confirmable request, so ignore it. */
         return;
     }
 
     switch (otCoapHeaderGetCode(aHeader)) {
-        case kCoapRequestGet:   /* A GET request */
+        case OT_COAP_CODE_GET:   /* A GET request */
             {
                 /*
                  * In our case, we don't care about the message, we just
@@ -226,8 +226,8 @@ static void ambientLightSensorHandler(
 
                 otCoapHeaderInit(
                         &replyHeader,
-                        kCoapTypeAcknowledgment,
-                        kCoapResponseContent
+                        OT_COAP_TYPE_ACKNOWLEDGMENT,
+                        OT_COAP_CODE_CONTENT
                 );
 
                 otCoapHeaderSetToken(&replyHeader,
@@ -286,8 +286,8 @@ static void ledsReplyHandler(struct CoapHandlerContext *handlerContext,
 
     otCoapHeaderInit(
             &replyHeader,
-            kCoapTypeAcknowledgment,
-            kCoapResponseContent
+            OT_COAP_TYPE_ACKNOWLEDGMENT,
+            OT_COAP_CODE_CONTENT
     );
 
     otCoapHeaderSetToken(&replyHeader,
@@ -341,17 +341,17 @@ static void ledsHandler(
     struct CoapHandlerContext *handlerContext =
         (struct CoapHandlerContext*)aContext;
 
-    if (otCoapHeaderGetType(aHeader) != kCoapTypeConfirmable)
+    if (otCoapHeaderGetType(aHeader) != OT_COAP_TYPE_CONFIRMABLE)
     {
         /* Not a confirmable request, so ignore it. */
         return;
     }
 
     switch (otCoapHeaderGetCode(aHeader)) {
-        case kCoapRequestGet:   /* A GET request */
+        case OT_COAP_CODE_GET:   /* A GET request */
             ledsReplyHandler(handlerContext, aHeader, aMessageInfo);
             break;
-        case kCoapRequestPost:  /* A POST request */
+        case OT_COAP_CODE_POST:  /* A POST request */
             {
                 /*
                  * Inspect the message, we should be given two bytes, one
