@@ -34,6 +34,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <openthread/types.h>
 #include <openthread/coap.h>
@@ -174,7 +175,7 @@ static void defaultHandler(
                     result = otMessageAppend(replyMessage,
                             "Hello World!", 12);
 
-                    if (result != OT_ERROR_NONE)
+                    if (result == OT_ERROR_NONE)
                     {
                         /* All good, now send it */
                         result = otCoapSendResponse(
@@ -245,11 +246,14 @@ static void ambientLightSensorHandler(
                 if (replyMessage)
                 {
                     otError result;
+                    char responseData[32];
                     uint16_t reading = cc2538dkAlsRead();
+                    int len = snprintf(responseData, sizeof(responseData)-1,
+                            "%d", reading);
                     result = otMessageAppend(replyMessage,
-                            &reading, sizeof(reading));
+                            responseData, len+1);
 
-                    if (result != OT_ERROR_NONE)
+                    if (result == OT_ERROR_NONE)
                     {
                         /* All good, now send it */
                         result = otCoapSendResponse(
@@ -303,12 +307,16 @@ static void ledsReplyHandler(struct CoapHandlerContext *handlerContext,
     if (replyMessage)
     {
         otError result;
-        uint8_t leds = handlerContext->leds;
+
+        /* Convert to hexadecimal */
+        char response[32];
+        int len = snprintf(response, sizeof(response)-1,
+                "%x", (char)handlerContext->leds);
         result = otMessageAppend(
-                replyMessage, &leds, sizeof(leds)
+                replyMessage, response, len+1
         );
 
-        if (result != OT_ERROR_NONE)
+        if (result == OT_ERROR_NONE)
         {
             /* All good, now send it */
             result = otCoapSendResponse(
@@ -357,10 +365,11 @@ static void ledsHandler(
                 char raw[2];
                 int read = otMessageRead(aMessage,
                     otMessageGetOffset(aMessage),
-                    &raw, sizeof(raw));
+                    raw, sizeof(raw));
                 if (read == sizeof(raw))
                 {
                     uint8_t leds = handlerContext->leds;
+
                     /* Decode the mask in byte 2: hex */
                     uint8_t mask = 0;
                     if ((raw[1] >= '0') && (raw[1] <= '9'))
@@ -420,6 +429,8 @@ static void ledsHandler(
                         else
                             cc2538GpioClearPin(CC2538DK_LED4_PORT,
                                     CC2538DK_LED4_PIN);
+
+                        handlerContext->leds = leds;
                     }
                 }
                 ledsReplyHandler(handlerContext, aHeader, aMessageInfo);
