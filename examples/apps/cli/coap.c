@@ -143,7 +143,7 @@ static void defaultHandler(
                  * In our case, we don't care about the message, we just
                  * send a reply.  We need to copy the message ID and token
                  * from the original message.  The reply is an ACK with
-                 * content.
+                 * content, so we set the payload marker to indicate this.
                  */
                 otCoapHeader replyHeader;
                 otMessage *replyMessage;
@@ -163,6 +163,8 @@ static void defaultHandler(
                         &replyHeader,
                         otCoapHeaderGetMessageId(aHeader)
                 );
+
+                otCoapHeaderSetPayloadMarker(&replyHeader);
 
                 replyMessage = otCoapNewMessage(
                         handlerContext->aInstance, &replyHeader
@@ -219,7 +221,7 @@ static void ambientLightSensorHandler(
                 /*
                  * In our case, we don't care about the message, we just
                  * send a reply.  We need to copy the message ID and token
-                 * from the original message.
+                 * from the original message, and set the payload marker.
                  */
                 otCoapHeader replyHeader;
                 otMessage *replyMessage;
@@ -240,6 +242,8 @@ static void ambientLightSensorHandler(
                         otCoapHeaderGetMessageId(aHeader)
                 );
 
+                otCoapHeaderSetPayloadMarker(&replyHeader);
+
                 replyMessage = otCoapNewMessage(
                         handlerContext->aInstance, &replyHeader);
 
@@ -251,7 +255,7 @@ static void ambientLightSensorHandler(
                     int len = snprintf(responseData, sizeof(responseData)-1,
                             "%d", reading);
                     result = otMessageAppend(replyMessage,
-                            responseData, len+1);
+                            responseData, len);
 
                     if (result == OT_ERROR_NONE)
                     {
@@ -284,21 +288,36 @@ static void ledsReplyHandler(struct CoapHandlerContext *handlerContext,
     otCoapHeader replyHeader;
     otMessage *replyMessage;
 
+    /*
+     * Reply is an ACK with content to come
+     */
     otCoapHeaderInit(
             &replyHeader,
             OT_COAP_TYPE_ACKNOWLEDGMENT,
             OT_COAP_CODE_CONTENT
     );
 
+    /*
+     * Copy the token from the request header
+     */
     otCoapHeaderSetToken(&replyHeader,
             otCoapHeaderGetToken(aHeader),
             otCoapHeaderGetTokenLength(aHeader)
     );
 
+    /*
+     * Copy the message ID from the request header
+     */
     otCoapHeaderSetMessageId(
             &replyHeader,
             otCoapHeaderGetMessageId(aHeader)
     );
+
+    /*
+     * We're generating a piggy-back response, set the marker indicating this
+     * or we'll get a PARSE error when we try to send.
+     */
+    otCoapHeaderSetPayloadMarker(&replyHeader);
 
     replyMessage = otCoapNewMessage(
             handlerContext->aInstance, &replyHeader
@@ -308,12 +327,15 @@ static void ledsReplyHandler(struct CoapHandlerContext *handlerContext,
     {
         otError result;
 
-        /* Convert to hexadecimal */
+        /*
+         * Convert to hexadecimal and append the message.  Do not include the
+         * terminating NULL byte in the payload.
+         */
         char response[32];
         int len = snprintf(response, sizeof(response)-1,
                 "%x", (char)handlerContext->leds);
         result = otMessageAppend(
-                replyMessage, response, len+1
+                replyMessage, response, len
         );
 
         if (result == OT_ERROR_NONE)
