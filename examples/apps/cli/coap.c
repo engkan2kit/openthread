@@ -68,6 +68,22 @@ static void defaultHandler(
         const otMessageInfo *aMessageInfo);
 
 /**
+ * Handler for the RFC-6690 CoRE response payload.
+ */
+static void coreHandler(
+        void *aContext, otCoapHeader *aHeader, otMessage *aMessage,
+        const otMessageInfo *aMessageInfo);
+/**
+ * Resource definition for the ambient light sensor.
+ */
+static otCoapResource coreResource = {
+    .mUriPath = ".well-known/core",
+    .mHandler = &coreHandler,
+    .mContext = (void*)&instanceContext,
+    .mNext = NULL
+};
+
+/**
  * Handler for an ambient light sensor.
  */
 static void ambientLightSensorHandler(
@@ -105,6 +121,7 @@ otError coapExampleInit(otInstance *aInstance)
     otCoapSetDefaultHandler(aInstance, &defaultHandler, (void*)&instanceContext);
     otCoapAddResource(aInstance, &ambientLightSensorResource);
     otCoapAddResource(aInstance, &ledsResource);
+    otCoapAddResource(aInstance, &coreResource);
     return otCoapStart(aInstance, OT_DEFAULT_COAP_PORT);
 }
 
@@ -176,6 +193,109 @@ static void defaultHandler(
                     /* Our reply is tacked onto the end. */
                     result = otMessageAppend(replyMessage,
                             "Hello World!", 12);
+
+                    if (result == OT_ERROR_NONE)
+                    {
+                        /* All good, now send it */
+                        result = otCoapSendResponse(
+                                handlerContext->aInstance, replyMessage,
+                                aMessageInfo);
+                    }
+
+                    if (result != OT_ERROR_NONE)
+                    {
+                        /* There was an issue above, free up the message */
+                        otMessageFree(replyMessage);
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+static void coreHandler(
+        void *aContext, otCoapHeader *aHeader, otMessage *aMessage,
+        const otMessageInfo *aMessageInfo)
+{
+    /* Ignore message */
+    (void)aMessage;
+
+    /* Pick up our context passed in earlier */
+    struct CoapHandlerContext *handlerContext =
+        (struct CoapHandlerContext*)aContext;
+
+    if (otCoapHeaderGetType(aHeader) != OT_COAP_TYPE_CONFIRMABLE)
+    {
+        /* Not a confirmable request, so ignore it. */
+        return;
+    }
+
+    switch (otCoapHeaderGetCode(aHeader)) {
+        case OT_COAP_CODE_GET:   /* A GET request */
+            {
+                /*
+                 * In our case, we don't care about the message, we just
+                 * send a reply.  We need to copy the message ID and token
+                 * from the original message, and set the payload marker.
+                 *
+                 * For this special endpoint, we also set the content format.
+                 */
+                otError result;
+                otCoapHeader replyHeader;
+                otMessage *replyMessage = NULL;
+
+                otCoapHeaderInit(
+                        &replyHeader,
+                        OT_COAP_TYPE_ACKNOWLEDGMENT,
+                        OT_COAP_CODE_CONTENT
+                );
+
+                otCoapHeaderSetToken(&replyHeader,
+                        otCoapHeaderGetToken(aHeader),
+                        otCoapHeaderGetTokenLength(aHeader)
+                );
+
+                otCoapHeaderSetMessageId(
+                        &replyHeader,
+                        otCoapHeaderGetMessageId(aHeader)
+                );
+
+                /*
+                 * Setting the content format.  This must be done *before*
+                 * setting the payload marker.
+                 *
+                 * The content format type codes are documented here:
+                 * https://tools.ietf.org/html/rfc7252#page-92
+                 *
+                 * Code 40 corresponds to application/link-format
+                 */
+                result = otCoapHeaderAppendUintOption(
+                        &replyHeader,
+                        OT_COAP_OPTION_CONTENT_FORMAT,
+                        40
+                );
+
+                if (result == OT_ERROR_NONE) {
+                    otCoapHeaderSetPayloadMarker(&replyHeader);
+
+                    replyMessage = otCoapNewMessage(
+                            handlerContext->aInstance, &replyHeader);
+                }
+
+                if (replyMessage)
+                {
+                    static const char responseData[] =
+                        "</leds>;type=text/plain;title=\"LEDs control.  "
+                        "GET this URI to see the state of the LEDs as a hex "
+                        "bit mask, POST 0x (where x = hex bitmask) to turn "
+                        "LEDs off, POST 1x to turn LEDs on, POST tx to "
+                        "toggle LEDs.\","
+                        "</als>;type=text/plain;title=\"Read the ambient "
+                        "light sensor reading.\"";
+                    result = otMessageAppend(replyMessage,
+                            responseData, sizeof(responseData));
 
                     if (result == OT_ERROR_NONE)
                     {
