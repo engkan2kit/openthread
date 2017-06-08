@@ -68,6 +68,11 @@ otError otCoapHeaderAppendUintOption(otCoapHeader *aHeader, uint16_t aNumber, ui
     return static_cast<Coap::Header *>(aHeader)->AppendUintOption(aNumber, aValue);
 }
 
+otError otCoapHeaderSetContentFormatOption(otCoapHeader *aHeader, otCoapOptionContentFormat aContentFormat)
+{
+    return otCoapHeaderAppendUintOption(aHeader, OT_COAP_OPTION_CONTENT_FORMAT, (uint32_t)aContentFormat);
+}
+
 otError otCoapHeaderAppendObserveOption(otCoapHeader *aHeader, uint32_t aObserve)
 {
     return static_cast<Coap::Header *>(aHeader)->AppendObserveOption(aObserve);
