@@ -265,16 +265,10 @@ static void coreHandler(
                 /*
                  * Setting the content format.  This must be done *before*
                  * setting the payload marker.
-                 *
-                 * The content format type codes are documented here:
-                 * https://tools.ietf.org/html/rfc7252#page-92
-                 *
-                 * Code 40 corresponds to application/link-format
                  */
-                result = otCoapHeaderAppendUintOption(
+                result = otCoapHeaderSetContentFormatOption(
                         &replyHeader,
-                        OT_COAP_OPTION_CONTENT_FORMAT,
-                        40
+                        OT_COAP_OPTION_CONTENT_FORMAT_LINK_FORMAT
                 );
 
                 if (result == OT_ERROR_NONE) {
