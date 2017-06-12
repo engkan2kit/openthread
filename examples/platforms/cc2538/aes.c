@@ -178,9 +178,14 @@ int32_t cc2538AesHashStart(const void *dataIn, uint32_t dataLen,
         HWREG(AES_HASH_MODE_IN) = AES_HASH_MODE_IN_SHA256 | AES_HASH_MODE_IN_NEW;
     }
 
-    /* Copy across size. */
-    HWREG(AES_HASH_LENGTH_IN_L) = dataLen;
-    HWREG(AES_HASH_LENGTH_IN_H) = 0;
+    /*
+     * Copy across size.   The message length is given in bits so we need to
+     * multiply by 8.  This pushes the *upper* three bits into the upper
+     * 32-bit long word: the same result is achieved by left shifting 32-3=29
+     * places.
+     */
+    HWREG(AES_HASH_LENGTH_IN_L) = dataLen << 3;
+    HWREG(AES_HASH_LENGTH_IN_H) = dataLen >> 29;
 
     /* Enable padding of the message if selected */
     if (pad)
