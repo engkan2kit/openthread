@@ -156,9 +156,13 @@
 #define SYS_CTRL_DCGCUART_UART0                 0x00000001
 
 #define SYS_CTRL_RCGCSEC_AES                    0x00000002
+#define SYS_CTRL_RCGCSEC_PKA                    0x00000001
 #define SYS_CTRL_SCGCSEC_AES                    0x00000002
+#define SYS_CTRL_SCGCSEC_PKA                    0x00000001
 #define SYS_CTRL_DCGCSEC_AES                    0x00000002
+#define SYS_CTRL_DCGCSEC_PKA                    0x00000001
 #define SYS_CTRL_SRSEC_AES                      0x00000002
+#define SYS_CTRL_SRSEC_PKA                      0x00000001
 
 #define IOC_PA0_SEL                             0x400D4000  // Peripheral select control
 #define IOC_PA1_SEL                             0x400D4004  // Peripheral select control
