@@ -27,6 +27,7 @@
  */
 
 #include "aes.h"
+#include "rom-utility.h"
 
 #define AES_CTRL_ALG_SEL_TAG                (1 << 31)   /* DMA includes TAG */
 #define AES_CTRL_ALG_SEL_HASH               (1 << 2)    /* Hash mode */
@@ -43,13 +44,6 @@
 #define AES_DMAC_CHx_CTRL_EN                (1 << 0)    /* Enable DMA channel */
 #define AES_DMAC_CHx_CTRL_PRIO              (1 << 1)    /* Enable DMA priority */
 #define AES_CTRL_INT_CFG_LEVEL              (1 << 0)
-
-/**
- * ROM built-in memcpy function.
- */
-static void (*rom_memcpy)(volatile void *dest, const volatile void *src, size_t sz)
-    = (void (*)(volatile void*, const volatile void*, size_t))
-        (0x00000048 + (7*sizeof(void*)));
 
 /**
  * Enable the AES crypto engine
@@ -168,7 +162,7 @@ int32_t cc2538AesHashStart(const void *dataIn, uint32_t dataLen,
     if (hashIn)
     {
         /* Existing hash given, copy it in first */
-        rom_memcpy(&(HWREG(AES_HASH_DIGEST_A)), hashIn, hashLen);
+        ROM_Memcpy((void*)&(HWREG(AES_HASH_DIGEST_A)), hashIn, hashLen);
         /* Select SHA256 mode with existing hash result */
         HWREG(AES_HASH_MODE_IN) = AES_HASH_MODE_IN_SHA256;
     }
