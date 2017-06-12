@@ -35,6 +35,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <openthread/types.h>
 #include <openthread/coap.h>
@@ -42,6 +43,7 @@
 #include <openthread/platform/platform.h>
 
 #include "boards/cc2538dk/board-cc2538dk.h"
+#include "aes.h"
 
 /**
  * Context information to be passed to our handlers.
@@ -115,12 +117,30 @@ static otCoapResource ledsResource = {
     .mNext = NULL
 };
 
+/**
+ * Handler for SHA-256.
+ */
+static void sha256Handler(
+        void *aContext, otCoapHeader *aHeader, otMessage *aMessage,
+        const otMessageInfo *aMessageInfo);
+
+/**
+ * Resource definition for the LEDs.
+ */
+static otCoapResource sha256Resource = {
+    .mUriPath = "hash",
+    .mHandler = &sha256Handler,
+    .mContext = (void*)&instanceContext,
+    .mNext = NULL
+};
+
 otError coapExampleInit(otInstance *aInstance)
 {
     instanceContext.aInstance = aInstance;
     otCoapSetDefaultHandler(aInstance, &defaultHandler, (void*)&instanceContext);
     otCoapAddResource(aInstance, &ambientLightSensorResource);
     otCoapAddResource(aInstance, &ledsResource);
+    otCoapAddResource(aInstance, &sha256Resource);
     otCoapAddResource(aInstance, &coreResource);
     return otCoapStart(aInstance, OT_DEFAULT_COAP_PORT);
 }
@@ -287,7 +307,9 @@ static void coreHandler(
                         "LEDs off, POST 1x to turn LEDs on, POST tx to "
                         "toggle LEDs.\","
                         "</als>;type=text/plain;title=\"Read the ambient "
-                        "light sensor reading.\"";
+                        "light sensor reading.\","
+			"</hash>;type=text/plain;title=\"Emit the SHA-256 hash "
+			"of the incoming POST data.\"";
                     result = otMessageAppend(replyMessage,
                             responseData, sizeof(responseData));
 
@@ -570,6 +592,221 @@ static void ledsHandler(
                     }
                 }
                 ledsReplyHandler(handlerContext, aHeader, aMessageInfo);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+static void sha256Handler(
+        void *aContext, otCoapHeader *aHeader, otMessage *aMessage,
+        const otMessageInfo *aMessageInfo)
+{
+    /* Pick up our context passed in earlier */
+    struct CoapHandlerContext *handlerContext =
+        (struct CoapHandlerContext*)aContext;
+
+    if (otCoapHeaderGetType(aHeader) != OT_COAP_TYPE_CONFIRMABLE)
+    {
+        /* Not a confirmable request, so ignore it. */
+        return;
+    }
+
+    switch (otCoapHeaderGetCode(aHeader)) {
+        case OT_COAP_CODE_GET:   /* A GET request */
+            {
+                otCoapHeader replyHeader;
+                otMessage *replyMessage;
+
+                /*
+                 * Reply is an ACK with content to come
+                 */
+                otCoapHeaderInit(
+                        &replyHeader,
+                        OT_COAP_TYPE_ACKNOWLEDGMENT,
+                        OT_COAP_CODE_CONTENT
+                        );
+
+                /*
+                 * Copy the token from the request header
+                 */
+                otCoapHeaderSetToken(&replyHeader,
+                        otCoapHeaderGetToken(aHeader),
+                        otCoapHeaderGetTokenLength(aHeader)
+                        );
+
+                /*
+                 * Copy the message ID from the request header
+                 */
+                otCoapHeaderSetMessageId(
+                        &replyHeader,
+                        otCoapHeaderGetMessageId(aHeader)
+                        );
+
+                /*
+                 * We're generating a piggy-back response,
+                 * set the marker indicating this or we'll get a PARSE
+                 * error when we try to send.
+                 */
+                otCoapHeaderSetPayloadMarker(&replyHeader);
+
+                replyMessage = otCoapNewMessage(
+                        handlerContext->aInstance, &replyHeader
+                        );
+
+                if (replyMessage)
+                {
+                    otError result;
+                    result = otMessageAppend(
+                            replyMessage, "Send data in a POST message.", 28);
+
+                    if (result == OT_ERROR_NONE)
+                    {
+                        /* All good, now send it */
+                        result = otCoapSendResponse(
+                                handlerContext->aInstance, replyMessage,
+                                aMessageInfo
+                                );
+                    }
+
+                    if (result != OT_ERROR_NONE)
+                    {
+                        /* There was an issue above, free up the message */
+                        otMessageFree(replyMessage);
+                    }
+                }
+            }
+            break;
+        case OT_COAP_CODE_POST:  /* A POST request */
+            {
+                otCoapHeader replyHeader;
+                otMessage *replyMessage;
+
+                uint32_t dataLen = otMessageGetLength(aMessage)
+                                - otMessageGetOffset(aMessage);
+                uint8_t data[dataLen];
+                uint8_t hash[32];
+                char response[64];
+                uint8_t responseLen = 0;
+
+                int result = otMessageRead(aMessage,
+                        otMessageGetOffset(aMessage), data, dataLen);
+
+                if ((result > 0) && ((uint32_t)result == dataLen))
+                {
+                    cc2538AesEnable();
+
+                    /* Compute the hash */
+                    cc2538AesHashStart(data, dataLen, NULL, hash,
+                            sizeof(hash), true);
+
+                    /* Busy wait for result */
+                    result = cc2538AesHashStatus();
+                    while (result == -EINPROGRESS)
+                    {
+                        result = cc2538AesHashStatus();
+                    }
+                    cc2538AesHashFinish();
+                    cc2538AesDisable();
+
+                    if (result == -EIO)
+                    {
+                        strncpy(response, "Failed due to DMA bus error.",
+                                sizeof(response) - 1);
+                        responseLen = strlen(response);
+                    }
+                    else if (result)
+                    {
+                        responseLen = sniprintf(response, sizeof(response)-1,
+                                "Failed due to unknown error %d.", result);
+                    }
+                    else
+                    {
+                        /* Convert result to hex */
+                        uint8_t i = 0;
+                        char* out = response;
+                        const uint8_t* in = hash;
+                        for (i = 0; i < sizeof(hash); i++, in++)
+                        {
+                            uint8_t nybble = (*in) >> 4;
+                            if (nybble > 9)
+                                *out = 'a' + nybble - 10;
+                            else
+                                *out = '0' + nybble;
+                            out++;
+
+                            nybble = (*in) & 0x0f;
+                            if (nybble > 9)
+                                *out = 'a' + nybble - 10;
+                            else
+                                *out = '0' + nybble;
+                            out++;
+                        }
+                        responseLen = sizeof(response);
+                    }
+                } else {
+                    responseLen = sniprintf(response, sizeof(response)-1,
+                            "Failed due to short read (result %d).", result);
+                }
+
+                /*
+                 * Reply is an ACK with content to come
+                 */
+                otCoapHeaderInit(
+                        &replyHeader,
+                        OT_COAP_TYPE_ACKNOWLEDGMENT,
+                        OT_COAP_CODE_CONTENT
+                        );
+
+                /*
+                 * Copy the token from the request header
+                 */
+                otCoapHeaderSetToken(&replyHeader,
+                        otCoapHeaderGetToken(aHeader),
+                        otCoapHeaderGetTokenLength(aHeader)
+                        );
+
+                /*
+                 * Copy the message ID from the request header
+                 */
+                otCoapHeaderSetMessageId(
+                        &replyHeader,
+                        otCoapHeaderGetMessageId(aHeader)
+                        );
+
+                /*
+                 * We're generating a piggy-back response,
+                 * set the marker indicating this or we'll get a PARSE
+                 * error when we try to send.
+                 */
+                otCoapHeaderSetPayloadMarker(&replyHeader);
+
+                replyMessage = otCoapNewMessage(
+                        handlerContext->aInstance, &replyHeader
+                        );
+
+                if (replyMessage)
+                {
+                    otError resultErr;
+                    resultErr = otMessageAppend(
+                            replyMessage, response, responseLen);
+
+                    if (resultErr == OT_ERROR_NONE)
+                    {
+                        /* All good, now send it */
+                        resultErr = otCoapSendResponse(
+                                handlerContext->aInstance, replyMessage,
+                                aMessageInfo
+                                );
+                    }
+
+                    if (resultErr != OT_ERROR_NONE)
+                    {
+                        /* There was an issue above, free up the message */
+                        otMessageFree(replyMessage);
+                    }
+                }
             }
             break;
         default:
