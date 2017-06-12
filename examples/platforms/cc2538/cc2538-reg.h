@@ -249,4 +249,38 @@
 #define FLASH_CTRL_FCTL                         0x400D3008  // Flash control
 #define FLASH_CTRL_DIECFG0                      0x400D3014  // Flash information
 
+#define AES_DMAC_CH0_CTRL                       0x4008B000  // AES DMA Ch0 Control
+#define AES_DMAC_CH0_EXTADDR                    0x4008B004  // AES DMA Ch0 Address
+#define AES_DMAC_CH0_DMALENGTH                  0x4008B00C  // AES DMA Ch0 Length
+#define AES_DMAC_STATUS                         0x4008B018  // AES DMA Status
+#define AES_DMAC_SWRES                          0x4008B018  // AES DMA Software Reset
+#define AES_DMAC_CH1_CTRL                       0x4008B020  // AES DMA Ch1 Control
+#define AES_DMAC_CH1_EXTADDR                    0x4008B024  // AES DMA Ch1 Address
+#define AES_DMAC_CH1_DMALENGTH                  0x4008B02C  // AES DMA Ch1 Length
+#define AES_DMAC_MST_RUNPARAMS                  0x4008B078  // AES DMA Master Run-Time Parameters
+#define AES_DMAC_PERSR                          0x4008B07C  // AES DMA Port Error Raw Status
+#define AES_DMAC_OPTIONS                        0x4008B0F8  // AES DMA Options
+#define AES_DMAC_VERSION                        0x4008B0FC  // AES DMA Version
+#define AES_HASH_IO_BUF_CTRL                    0x4008B640  // AES Hash I/O Buffer Control
+#define AES_HASH_MODE_IN                        0x4008B644  // AES Hash Mode
+#define AES_HASH_LENGTH_IN_L                    0x4008B648  // AES Hash Length: Lower 32-bits
+#define AES_HASH_LENGTH_IN_H                    0x4008B64C  // AES Hash Length: Upper 32-bits
+#define AES_HASH_DIGEST_A                       0x4008B650  // AES Hash Output: Part A
+#define AES_HASH_DIGEST_B                       0x4008B654  // AES Hash Output: Part B
+#define AES_HASH_DIGEST_C                       0x4008B658  // AES Hash Output: Part C
+#define AES_HASH_DIGEST_D                       0x4008B65C  // AES Hash Output: Part D
+#define AES_HASH_DIGEST_E                       0x4008B660  // AES Hash Output: Part E
+#define AES_HASH_DIGEST_F                       0x4008B664  // AES Hash Output: Part F
+#define AES_HASH_DIGEST_G                       0x4008B668  // AES Hash Output: Part G
+#define AES_HASH_DIGEST_H                       0x4008B66C  // AES Hash Output: Part H
+#define AES_CTRL_ALG_SEL                        0x4008B700  // AES Control Algorithm Select
+#define AES_CTRL_PROT_EN                        0x4008B704  // AES Master PROT privileged access enable
+#define AES_CTRL_SW_RESET                       0x4008B740  // AES Control Software Reset
+#define AES_CTRL_INT_CFG                        0x4008B780  // AES Control Interrupt Configuration
+#define AES_CTRL_INT_EN                         0x4008B784  // AES Control Interrupt Enable
+#define AES_CTRL_INT_CLR                        0x4008B788  // AES Control Interrupt Clear
+#define AES_CTRL_INT_SET                        0x4008B78C  // AES Control Interrupt Set
+#define AES_CTRL_INT_STAT                       0x4008B790  // AES Control Interrupt Status
+#define AES_CTRL_OPTIONS                        0x4008B7F8  // AES Control Options
+
 #endif
