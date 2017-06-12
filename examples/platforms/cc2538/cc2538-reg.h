@@ -293,4 +293,20 @@
 #define AES_CTRL_INT_STAT                       0x4008B790  // AES Control Interrupt Status
 #define AES_CTRL_OPTIONS                        0x4008B7F8  // AES Control Options
 
+#define PKA_APTR                                0x44004000  // PKA Vector A address
+#define PKA_BPTR                                0x44004004  // PKA Vector B address
+#define PKA_CPTR                                0x44004008  // PKA Vector C address
+#define PKA_DPTR                                0x4400400C  // PKA Vector D address
+#define PKA_ALENGTH                             0x44004010  // PKA Vector A length
+#define PKA_BLENGTH                             0x44004014  // PKA Vector B length
+#define PKA_SHIFT                               0x44004018  // PKA bit shift value
+#define PKA_FUNCTION                            0x4400401C  // PKA function
+#define PKA_COMPARE                             0x44004020  // PKA compare result
+#define PKA_MSW                                 0x44004024  // PKA result vector most sigificant word
+#define PKA_DIVMSW                              0x44004028  // PKA divide remainder most sigificant word
+#define PKA_SEQ_CTRL                            0x440040C8  // PKA sequencer control and status
+#define PKA_OPTIONS                             0x440040F4  // PKA hardware options
+#define PKA_SW_REV                              0x440040F8  // PKA software revision
+#define PKA_REVISION                            0x440040FC  // PKA hardware revision
+
 #endif
