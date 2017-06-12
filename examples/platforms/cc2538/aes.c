@@ -28,7 +28,7 @@
 
 #include "aes.h"
 
-#define AES_CTRL_ALG_SEL_TAG                (1 << 31)   /* Tag is included in data */
+#define AES_CTRL_ALG_SEL_TAG                (1 << 31)   /* DMA includes TAG */
 #define AES_CTRL_ALG_SEL_HASH               (1 << 2)    /* Hash mode */
 #define AES_CTRL_ALG_SEL_AES                (1 << 1)    /* AES encrypt/decrypt mode */
 #define AES_CTRL_ALG_SEL_KEYSTORE           (1 << 0)    /* Key store mode */
@@ -49,6 +49,35 @@
 static void (*rom_memcpy)(volatile void *dest, const volatile void *src, size_t sz)
     = (void (*)(volatile void*, const volatile void*, size_t))
         (0x00000048 + (7*sizeof(void*)));
+
+/**
+ * Enable the AES crypto engine
+ */
+void cc2538AesEnable()
+{
+    uint8_t delay = 16;
+
+    /* Turn on AES module */
+    HWREG(SYS_CTRL_RCGCSEC) |= SYS_CTRL_RCGCSEC_AES;
+    HWREG(SYS_CTRL_SCGCSEC) |= SYS_CTRL_SCGCSEC_AES;
+    HWREG(SYS_CTRL_DCGCSEC) |= SYS_CTRL_DCGCSEC_AES;
+
+    /* Reset the module */
+    HWREG(SYS_CTRL_SRSEC) |= SYS_CTRL_SRSEC_AES;
+    while(delay--);
+    HWREG(SYS_CTRL_SRSEC) &= ~SYS_CTRL_SRSEC_AES;
+}
+
+/**
+ * Disable the AES crypto engine
+ */
+void cc2538AesDisable()
+{
+    /* Turn off AES module */
+    HWREG(SYS_CTRL_RCGCSEC) &= ~SYS_CTRL_RCGCSEC_AES;
+    HWREG(SYS_CTRL_SCGCSEC) &= ~SYS_CTRL_SCGCSEC_AES;
+    HWREG(SYS_CTRL_DCGCSEC) &= ~SYS_CTRL_DCGCSEC_AES;
+}
 
 /**
  * Determine the result of the hash operation.
@@ -107,12 +136,12 @@ int32_t cc2538AesHashStart(const void *dataIn, uint32_t dataLen,
         void *hashIn, void *hashOut, uint32_t hashLen, _Bool pad)
 {
     /* Check we're not busy or have an unacknowledged state */
-    if (HWREG(AES_DMAC_CH0_CTRL) || HWREG(AES_DMAC_CH1_CTRL)
-            || HWREG(AES_CTRL_INT_STAT))
+    if (HWREG(AES_DMAC_STATUS) || HWREG(AES_CTRL_INT_STAT))
         return -EBUSY;
 
     /* Select SHA256 as our algorithm */
-    HWREG(AES_CTRL_ALG_SEL) = AES_CTRL_ALG_SEL_HASH;
+    HWREG(AES_CTRL_ALG_SEL) = AES_CTRL_ALG_SEL_HASH
+                            | AES_CTRL_ALG_SEL_TAG;
 
     if (hashIn)
     {

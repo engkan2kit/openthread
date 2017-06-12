@@ -39,6 +39,16 @@ extern "C" {
 #endif
 
 /**
+ * Enable the AES crypto engine
+ */
+void cc2538AesEnable();
+
+/**
+ * Disable the AES crypto engine
+ */
+void cc2538AesDisable();
+
+/**
  * Determine the result of the hash operation.
  *
  * @retval      0               Operation competed successfully

@@ -134,6 +134,11 @@
 #define SYS_CTRL_RCGCUART                       0x400D2028
 #define SYS_CTRL_SCGCUART                       0x400D202C
 #define SYS_CTRL_DCGCUART                       0x400D2030
+#define SYS_CTRL_RCGCSEC                        0x400D2048
+#define SYS_CTRL_SCGCSEC                        0x400D204C
+#define SYS_CTRL_DCGCSEC                        0x400D2050
+#define SYS_CTRL_SRSEC                          0x400D2054
+
 #define SYS_CTRL_I_MAP                          0x400D2098
 #define SYS_CTRL_RCGCRFC                        0x400D20A8
 #define SYS_CTRL_SCGCRFC                        0x400D20AC
@@ -149,6 +154,11 @@
 #define SYS_CTRL_RCGCUART_UART0                 0x00000001
 #define SYS_CTRL_SCGCUART_UART0                 0x00000001
 #define SYS_CTRL_DCGCUART_UART0                 0x00000001
+
+#define SYS_CTRL_RCGCSEC_AES                    0x00000002
+#define SYS_CTRL_SCGCSEC_AES                    0x00000002
+#define SYS_CTRL_DCGCSEC_AES                    0x00000002
+#define SYS_CTRL_SRSEC_AES                      0x00000002
 
 #define IOC_PA0_SEL                             0x400D4000  // Peripheral select control
 #define IOC_PA1_SEL                             0x400D4004  // Peripheral select control
@@ -253,7 +263,7 @@
 #define AES_DMAC_CH0_EXTADDR                    0x4008B004  // AES DMA Ch0 Address
 #define AES_DMAC_CH0_DMALENGTH                  0x4008B00C  // AES DMA Ch0 Length
 #define AES_DMAC_STATUS                         0x4008B018  // AES DMA Status
-#define AES_DMAC_SWRES                          0x4008B018  // AES DMA Software Reset
+#define AES_DMAC_SWRES                          0x4008B01C  // AES DMA Software Reset
 #define AES_DMAC_CH1_CTRL                       0x4008B020  // AES DMA Ch1 Control
 #define AES_DMAC_CH1_EXTADDR                    0x4008B024  // AES DMA Ch1 Address
 #define AES_DMAC_CH1_DMALENGTH                  0x4008B02C  // AES DMA Ch1 Length
