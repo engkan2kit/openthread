@@ -142,6 +142,17 @@ int32_t cc2538AesHashStart(const void *dataIn, uint32_t dataLen,
         return -EBUSY;
 
     /*
+     * Sanity check alignment of values.  For 32-bit boundary alignment,
+     * the lower two bits should both be zero.
+     */
+    if (((uintptr_t)dataIn) & 0x3)
+        return -EFAULT;
+    if (((uintptr_t)hashIn) & 0x3)
+        return -EFAULT;
+    if (((uintptr_t)hashOut) & 0x3)
+        return -EFAULT;
+
+    /*
      * Enable interrupts.  They won't *actually* interrupt the CPU unless
      * also enabled in NVIC, *BUT* we won't see anything in the interrupt
      * status unless these are set.
