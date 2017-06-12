@@ -33,7 +33,7 @@
  */
 
 #include "platform-cc2538.h"
-#include "openthread-config.h"
+#include <openthread/config.h>
 
 otInstance *sInstance;
 
