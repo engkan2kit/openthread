@@ -42,6 +42,7 @@
 #define AES_HASH_IO_BUF_CTRL_PAD_DMA_MSG    (1 << 7)    /* Pad DMAed message data */
 #define AES_DMAC_CHx_CTRL_EN                (1 << 0)    /* Enable DMA channel */
 #define AES_DMAC_CHx_CTRL_PRIO              (1 << 1)    /* Enable DMA priority */
+#define AES_CTRL_INT_CFG_LEVEL              (1 << 0)
 
 /**
  * ROM built-in memcpy function.
@@ -103,6 +104,7 @@ int32_t cc2538AesHashStatus()
  */
 void cc2538AesHashFinish()
 {
+    HWREG(AES_CTRL_INT_EN)  = 0;
     HWREG(AES_CTRL_INT_CLR) = AES_CTRL_INT_RESULT_AV
                             | AES_CTRL_INT_DMA_IN_DONE
                             | AES_CTRL_INT_DMA_BUS_ERR
@@ -138,6 +140,15 @@ int32_t cc2538AesHashStart(const void *dataIn, uint32_t dataLen,
     /* Check we're not busy or have an unacknowledged state */
     if (HWREG(AES_DMAC_STATUS) || HWREG(AES_CTRL_INT_STAT))
         return -EBUSY;
+
+    /*
+     * Enable interrupts.  They won't *actually* interrupt the CPU unless
+     * also enabled in NVIC, *BUT* we won't see anything in the interrupt
+     * status unless these are set.
+     */
+    HWREG(AES_CTRL_INT_CFG) = AES_CTRL_INT_CFG_LEVEL;
+    HWREG(AES_CTRL_INT_EN)  = AES_CTRL_INT_DMA_IN_DONE
+                            | AES_CTRL_INT_RESULT_AV;
 
     /* Select SHA256 as our algorithm */
     HWREG(AES_CTRL_ALG_SEL) = AES_CTRL_ALG_SEL_HASH
