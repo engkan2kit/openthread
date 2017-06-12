@@ -42,6 +42,7 @@ libopenthread_cc2538_a_CPPFLAGS           = \
 
 libopenthread_cc2538_a_SOURCES            = \
     adc.c                                   \
+    aes.c                                   \
     alarm.c                                 \
     flash.c                                 \
     gpio.c                                  \
